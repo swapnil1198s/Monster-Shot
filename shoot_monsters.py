@@ -181,25 +181,24 @@ while alive:
                 bullets.append(Bullet(pygame.mouse.get_pos()))
                 gun.shoot()
             else:
-                pygame.event.post(pygame.event.Event(GAMEOVER))
-
-        
+                pygame.event.post(pygame.event.Event(GAMEOVER)) 
 
     shooting_range.fill(sky_blue)
     
     gun.draw(shooting_range)
     
+    #Update monster positions and scheck game over condition
     for monster in monsters:
-        
         if(monster.get_center()[0]<0):
             monsters.remove(monster)
         elif(gun.rect.colliderect(monster.rect)):
-            # shooting_range.fill(RED)
-            # gun.draw(shooting_range)
+            #Game over when monster collides with gun
             pygame.event.post(pygame.event.Event(GAMEOVER))
         else:
             monster.update()
         monster.draw(shooting_range)
+
+    #Check if bullets collide with monsters and update position
     for bullet in bullets:
         bullet.draw(shooting_range)
         bullet.update()
@@ -223,6 +222,8 @@ while alive:
     
     FramePerSec.tick(FPS)
 
+
+#Once the game is over, let the player know and show score.
 pygame.display.update()
 shooting_range.fill(LRED)
 score.draw(shooting_range)
@@ -232,6 +233,8 @@ rect = text.get_rect()
 rect.center = 500,500
 shooting_range.blit(text, rect)
 pygame.display.update()
-time.sleep(5)
+
+#Quits 7 seconds after game over
+time.sleep(7)
 pygame.quit()
 sys.exit()
