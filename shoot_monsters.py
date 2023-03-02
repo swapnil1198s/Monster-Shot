@@ -9,7 +9,6 @@ import sys
 import time
 
 pygame.init()
- 
 FPS = 60
 FramePerSec = pygame.time.Clock()
 
@@ -20,11 +19,6 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 sky_blue = (135,206,235)
-
-#This is the view surface
-shooting_range = pygame.display.set_mode((1000,1000))
-shooting_range.fill(sky_blue)
-pygame.display.set_caption("Shooting Monsters")
 
 #Our gun object that is controlled by mouse position and has 25 bullets
 class Gun(pygame.sprite.Sprite):
@@ -133,108 +127,119 @@ class Score():
     
     def get_score(self):
         return self.score
-    
-#Initialize gun, bullets,score, monsters, and events
-gun = Gun()
-fired = False
-bullets = []
-monsters = []
-monsters.append(Monster(1, (1000,250))) 
-GAMEOVER = pygame.USEREVENT + 0
-CREATEMONSTER_lvl1 = pygame.USEREVENT + 1
-pygame.time.set_timer(CREATEMONSTER_lvl1, 800)
-CREATEMONSTER_lvl2 = pygame.USEREVENT + 2
-pygame.time.set_timer(CREATEMONSTER_lvl2, 1000)
-CREATEMONSTER_lvl3 = pygame.USEREVENT + 3
-pygame.time.set_timer(CREATEMONSTER_lvl3, 1500)
-pygame.mouse.set_pos(50,250)
 
-score = Score()
-
-alive = True # False if gun collides with monster
-# Game loop
-
-while alive:
-    for event in pygame.event.get():
-        if event.type == GAMEOVER:
-            alive = False
-            # score.draw(shooting_range)
-            # font = pygame.font.Font('freesansbold.ttf', 32)
-            # text = font.render("Game Over!", True, WHITE)
-            # rect = text.get_rect()
-            # rect.center = 500,500
-            # shooting_range.blit(text, rect)
-        elif event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        
-        if event.type == CREATEMONSTER_lvl1:
-            monsters.append(Monster(1, (1000,random.randint(0,900))))
-        if event.type == CREATEMONSTER_lvl2:
-            monsters.append(Monster(2, (1000,random.randint(0,900)))) 
-        if event.type == CREATEMONSTER_lvl3:
-            monsters.append(Monster(3, (1000,random.randint(0,900)))) 
-        if event.type == MOUSEMOTION:
-            gun.update()
-        if event.type == MOUSEBUTTONDOWN:
-            if(len(bullets)<10):
-                bullets.append(Bullet(pygame.mouse.get_pos()))
-                gun.shoot()
-            else:
-                pygame.event.post(pygame.event.Event(GAMEOVER)) 
-
+#Controller method
+def main():
+    #This is the view surface
+    shooting_range = pygame.display.set_mode((1000,1000))
     shooting_range.fill(sky_blue)
-    
-    gun.draw(shooting_range)
-    
-    #Update monster positions and scheck game over condition
-    for monster in monsters:
-        if(monster.get_center()[0]<0):
-            monsters.remove(monster)
-        elif(gun.rect.colliderect(monster.rect)):
-            #Game over when monster collides with gun
-            pygame.event.post(pygame.event.Event(GAMEOVER))
-        else:
-            monster.update()
-        monster.draw(shooting_range)
+    pygame.display.set_caption("Shooting Monsters")
 
-    #Check if bullets collide with monsters and update position
-    for bullet in bullets:
-        bullet.draw(shooting_range)
-        bullet.update()
-        for monster in monsters:
-            if(bullet.rect.colliderect(monster.rect)):
-                bullets.remove(bullet)
-                if(monster.lvl == 1):
-                    monsters.remove(monster)
-                    score.update(score.get_score() + 50)
+
+    #Initialize gun, bullets,score, monsters, and events
+    gun = Gun()
+    fired = False
+    bullets = []
+    monsters = []
+    monsters.append(Monster(1, (1000,250))) 
+    GAMEOVER = pygame.USEREVENT + 0
+    CREATEMONSTER_lvl1 = pygame.USEREVENT + 1
+    pygame.time.set_timer(CREATEMONSTER_lvl1, 800)
+    CREATEMONSTER_lvl2 = pygame.USEREVENT + 2
+    pygame.time.set_timer(CREATEMONSTER_lvl2, 1000)
+    CREATEMONSTER_lvl3 = pygame.USEREVENT + 3
+    pygame.time.set_timer(CREATEMONSTER_lvl3, 1500)
+    pygame.mouse.set_pos(50,250)
+
+    score = Score()
+
+    alive = True # False if gun collides with monster
+    # Game loop
+
+    while alive:
+        for event in pygame.event.get():
+            if event.type == GAMEOVER:
+                alive = False
+                # score.draw(shooting_range)
+                # font = pygame.font.Font('freesansbold.ttf', 32)
+                # text = font.render("Game Over!", True, WHITE)
+                # rect = text.get_rect()
+                # rect.center = 500,500
+                # shooting_range.blit(text, rect)
+            elif event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            
+            if event.type == CREATEMONSTER_lvl1:
+                monsters.append(Monster(1, (1000,random.randint(0,900))))
+            if event.type == CREATEMONSTER_lvl2:
+                monsters.append(Monster(2, (1000,random.randint(0,900)))) 
+            if event.type == CREATEMONSTER_lvl3:
+                monsters.append(Monster(3, (1000,random.randint(0,900)))) 
+            if event.type == MOUSEMOTION:
+                gun.update()
+            if event.type == MOUSEBUTTONDOWN:
+                if(len(bullets)<10):
+                    bullets.append(Bullet(pygame.mouse.get_pos()))
+                    gun.shoot()
                 else:
-                    if(monster.health==1):
-                        monsters.remove(monster)
-                        score.update(score.get_score() + (monster.lvl * 80))
-                    else:
-                        monster.health -= 1
-    
-    score.draw(shooting_range)
+                    pygame.event.post(pygame.event.Event(GAMEOVER)) 
 
+        shooting_range.fill(sky_blue)
         
+        gun.draw(shooting_range)
+        
+        #Update monster positions and scheck game over condition
+        for monster in monsters:
+            if(monster.get_center()[0]<0):
+                monsters.remove(monster)
+            elif(gun.rect.colliderect(monster.rect)):
+                #Game over when monster collides with gun
+                pygame.event.post(pygame.event.Event(GAMEOVER))
+            else:
+                monster.update()
+            monster.draw(shooting_range)
+
+        #Check if bullets collide with monsters and update position
+        for bullet in bullets:
+            bullet.draw(shooting_range)
+            bullet.update()
+            for monster in monsters:
+                if(bullet.rect.colliderect(monster.rect)):
+                    bullets.remove(bullet)
+                    if(monster.lvl == 1):
+                        monsters.remove(monster)
+                        score.update(score.get_score() + 50)
+                    else:
+                        if(monster.health==1):
+                            monsters.remove(monster)
+                            score.update(score.get_score() + (monster.lvl * 80))
+                        else:
+                            monster.health -= 1
+        
+        score.draw(shooting_range)
+
+            
+        pygame.display.update()
+        
+        FramePerSec.tick(FPS)
+
+
+    #Once the game is over, let the player know and show score.
     pygame.display.update()
-    
-    FramePerSec.tick(FPS)
+    shooting_range.fill(LRED)
+    score.draw(shooting_range)
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render("Game Over!", True, WHITE)
+    rect = text.get_rect()
+    rect.center = 500,500
+    shooting_range.blit(text, rect)
+    pygame.display.update()
+
+    #Quits 7 seconds after game over
+    time.sleep(7)
+    pygame.quit()
+    sys.exit()
 
 
-#Once the game is over, let the player know and show score.
-pygame.display.update()
-shooting_range.fill(LRED)
-score.draw(shooting_range)
-font = pygame.font.Font('freesansbold.ttf', 32)
-text = font.render("Game Over!", True, WHITE)
-rect = text.get_rect()
-rect.center = 500,500
-shooting_range.blit(text, rect)
-pygame.display.update()
-
-#Quits 7 seconds after game over
-time.sleep(7)
-pygame.quit()
-sys.exit()
+main()
