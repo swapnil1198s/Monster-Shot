@@ -1,5 +1,5 @@
 # Monster-Shot
-CPSC 6160 project 2D game
+A simple 2D shooter game
 
 Program versions: 
   macOS Monterey 12.6.3
