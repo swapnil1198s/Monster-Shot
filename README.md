@@ -1,3 +1,4 @@
+![game2](https://github.com/swapnil1198s/Monster-Shot/assets/46658528/8c36417d-2fca-431a-b752-ff99b8877be2)
 # Monster-Shot
 A simple 2D shooter game
 
